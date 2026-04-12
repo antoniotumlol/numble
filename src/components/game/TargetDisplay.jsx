@@ -13,7 +13,7 @@ export default function TargetDisplay({ target, closest, isComplete }) {
             Solved!
           </div>
         ) : closest !== null ? (
-          `Closest: ${closest}`
+          `Closest: ${closest} (${Math.abs(target - closest)} away)`
         ) : (
           <span className="opacity-0">.</span>
         )}
