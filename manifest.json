@@ -4,12 +4,12 @@
   "description": "The ultimate daily math puzzle.",
   "icons": [
     {
-      "src": "numble192.png",
+      "src": "/numble192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "numble512.png",
+      "src": "/numble512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
