@@ -327,12 +327,12 @@ export default function Game() {
           />
 
           {/* Star Rating */}
-          <div className="my-3 sm:my-4">
+          <div className="my-0 sm:my-4">
             <StarRating stars={stars} size="large" />
           </div>
 
           {/* Current Operation Display */}
-          <div className="h-14 mb-3 sm:mb-4">
+          <div className="h-10 sm:h-14 mb-1 sm:mb-4">
             <AnimatePresence>
               <CurrentOperation 
                 firstNumber={currentState.selectedFirst?.value}
@@ -343,7 +343,7 @@ export default function Game() {
           </div>
 
           {/* Numbers Grid */}
-          <div className="flex flex-row justify-center gap-2 sm:gap-3 mb-2 sm:mb-6">
+          <div className="flex flex-row justify-center gap-1 sm:gap-3 mb-1 sm:mb-6">
             <AnimatePresence mode="popLayout">
               {currentState.numbers.map((numObj) => (
                 <motion.div
@@ -367,7 +367,7 @@ export default function Game() {
           </div>
 
           {/* Operations */}
-          <div className="flex gap-2 sm:gap-3 mb-3 sm:mb-6">
+          <div className="flex gap-1 sm:gap-3 mb-1 sm:mb-6">
             {[
               { op: 'add', symbol: '+' },
               { op: 'subtract', symbol: '−' },
