@@ -13,7 +13,7 @@ export default function HelpDialog({ open, onOpenChange }) {
           <br /><br />
           Click a number to select it, then an operation, then another number to perform the calculation.
         </p>
-        <Button className="w-full" onClick={() => onOpenChange(false)}>Close</Button>
+        <Button className="w-full text-white" onClick={() => onOpenChange(false)}>Close</Button>
       </div>
     </div>
   );

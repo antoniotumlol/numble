@@ -32,7 +32,7 @@ export default function ShareDialog({ open, onOpenChange, stars, title = "Share 
             <Linkedin className="w-6 h-6" />
           </a>
         </div>
-        <Button className="w-full mt-4" variant="secondary" onClick={() => onOpenChange(false)}>Close</Button>
+        <Button className="w-full mt-4 text-white" variant="secondary" onClick={() => onOpenChange(false)}>Close</Button>
       </div>
     </div>
   );
