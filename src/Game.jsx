@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Undo2, RotateCcw, Trophy, HelpCircle } from 'lucide-react';
+import { Undo2, RotateCcw, Trophy, HelpCircle, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NumberTile from '@/components/game/NumberTile';
 import OperationButton from '@/components/game/OperationButton';
@@ -9,6 +9,7 @@ import PuzzleTab from '@/components/game/PuzzleTab';
 import TargetDisplay from '@/components/game/TargetDisplay';
 import CurrentOperation from '@/components/game/CurrentOperation';
 import HelpDialog from '@/components/game/HelpDialog';
+import ShareDialog from '@/components/game/ShareDialog';
 
 // Seeded random number generator
 function seededRandom(seed) {
@@ -94,6 +95,7 @@ export default function Game() {
   
   const [activePuzzle, setActivePuzzle] = useState(0);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [puzzleStates, setPuzzleStates] = useState(() => 
     puzzles.map(puzzle => ({
       numbers: puzzle.startingNumbers.map((n, i) => ({ value: n, id: i, isOriginal: true, used: false })),
@@ -117,6 +119,16 @@ export default function Game() {
 
   const stars = calculateStars(currentPuzzle.target, closestNumber);
   const isComplete = availableNumbers.length === 1 || closestNumber === currentPuzzle.target;
+
+  useEffect(() => {
+    if (closestNumber === currentPuzzle.target && activePuzzle < puzzles.length - 1) {
+      setTimeout(() => {
+        setActivePuzzle(prev => prev + 1);
+      }, 1000);
+    } else if (activePuzzle === puzzles.length - 1 && isComplete && closestNumber === currentPuzzle.target) {
+        setShareOpen(true);
+    }
+  }, [closestNumber, currentPuzzle.target, activePuzzle, puzzles.length, isComplete]);
 
   const updateCurrentState = useCallback((updater) => {
     setPuzzleStates(prev => {
@@ -267,6 +279,14 @@ export default function Game() {
             >
               <HelpCircle className="w-5 h-5" />
             </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShareOpen(true)}
+              className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800/50"
+            >
+              <Share2 className="w-5 h-5" />
+            </Button>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50">
               <Trophy className="w-4 h-4 text-amber-400" />
               <span className="text-sm font-bold text-white">{totalStars}</span>
@@ -399,6 +419,14 @@ export default function Game() {
 
       {/* Help Dialog */}
       <HelpDialog open={helpOpen} onOpenChange={setHelpOpen} />
+      {/* Share Dialog */}
+      <ShareDialog 
+        open={shareOpen} 
+        onOpenChange={setShareOpen} 
+        stars={totalStars} 
+        title={totalStars === 15 ? "Congratulations!" : "Share your result"}
+        icon={totalStars === 15 ? <Trophy className="w-6 h-6 text-amber-400" /> : null}
+      />
     </div>
   );
 }
