@@ -165,18 +165,20 @@ export default function Game() {
           return;
       }
 
-      const newId = Date.now();
       updateCurrentState(state => ({
         numbers: state.numbers.map(n => {
-          if (n.id === state.selectedFirst.id || n.id === numberObj.id) {
+          if (n.id === state.selectedFirst.id) {
+            return { ...n, value: result };
+          }
+          if (n.id === numberObj.id) {
             return { ...n, used: true };
           }
           return n;
-        }).concat({ value: result, id: newId, isOriginal: false, used: false }),
+        }),
         history: [...state.history, {
           firstId: state.selectedFirst.id,
           secondId: numberObj.id,
-          resultId: newId,
+          oldFirstValue: state.selectedFirst.value,
           operation: state.selectedOperation
         }],
         selectedFirst: null,
@@ -203,14 +205,15 @@ export default function Game() {
       // Undo last operation
       const lastAction = currentState.history[currentState.history.length - 1];
       updateCurrentState(state => ({
-        numbers: state.numbers
-          .filter(n => n.id !== lastAction.resultId)
-          .map(n => {
-            if (n.id === lastAction.firstId || n.id === lastAction.secondId) {
-              return { ...n, used: false };
-            }
-            return n;
-          }),
+        numbers: state.numbers.map(n => {
+          if (n.id === lastAction.firstId) {
+            return { ...n, value: lastAction.oldFirstValue };
+          }
+          if (n.id === lastAction.secondId) {
+            return { ...n, used: false };
+          }
+          return n;
+        }),
         history: state.history.slice(0, -1),
         selectedFirst: null,
         selectedOperation: null
