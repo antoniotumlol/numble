@@ -6,6 +6,13 @@
     <link rel="apple-touch-icon" href="/numble.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="manifest" href="/manifest.json" />
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
     <title>Numble | The Daily Digits Puzzle - Best NYT Digits Alternative</title>
     <meta name="description" content="Miss the discontinued NYT Digits? Play Numble, the ultimate daily math puzzle. Use digits and operations to reach the target number. Free, global, and updated daily!">
     <meta property="og:title" content="Numble | The Daily Digits Puzzle" />
