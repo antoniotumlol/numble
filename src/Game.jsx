@@ -343,7 +343,7 @@ export default function Game() {
           </div>
 
           {/* Numbers Grid */}
-          <div className="flex flex-row justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <div className="flex flex-row justify-center gap-2 sm:gap-3 mb-2 sm:mb-6">
             <AnimatePresence mode="popLayout">
               {currentState.numbers.map((numObj) => (
                 <motion.div
@@ -367,7 +367,7 @@ export default function Game() {
           </div>
 
           {/* Operations */}
-          <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <div className="flex gap-2 sm:gap-3 mb-3 sm:mb-6">
             {[
               { op: 'add', symbol: '+' },
               { op: 'subtract', symbol: '−' },
