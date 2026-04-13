@@ -310,6 +310,17 @@ export default function Game() {
             >
               <Share2 className="w-5 h-5" />
             </Button>
+            {showInstallButton && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleInstallClick}
+                className="h-8 w-8 text-amber-400 hover:text-white hover:bg-slate-800/50"
+                title="Install App"
+              >
+                <Download className="w-5 h-5" />
+              </Button>
+            )}
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50">
               <Trophy className="w-4 h-4 text-amber-400" />
               <span className="text-sm font-bold text-white">{totalStars}</span>
