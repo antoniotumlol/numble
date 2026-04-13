@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Undo2, RotateCcw, Trophy, HelpCircle, Share2 } from 'lucide-react';
+import { Undo2, RotateCcw, Trophy, HelpCircle, Share2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NumberTile from '@/components/game/NumberTile';
 import OperationButton from '@/components/game/OperationButton';
@@ -96,6 +96,29 @@ export default function Game() {
   const [activePuzzle, setActivePuzzle] = useState(0);
   const [helpOpen, setHelpOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallButton, setShowInstallButton] = useState(false);
+
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallButton(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+      setShowInstallButton(false);
+    }
+  };
+
   const [puzzleStates, setPuzzleStates] = useState(() => 
     puzzles.map(puzzle => ({
       numbers: puzzle.startingNumbers.map((n, i) => ({ value: n, id: i, isOriginal: true, used: false })),
