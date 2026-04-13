@@ -1,0 +1,21 @@
+{
+  "short_name": "Numble",
+  "name": "Numble - Daily Digits Puzzle",
+  "description": "The ultimate daily math puzzle.",
+  "icons": [
+    {
+      "src": "numble192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "numble512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0f0d1a",
+  "display": "standalone",
+  "theme_color": "#0f0d1a"
+}
