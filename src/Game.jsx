@@ -9,7 +9,6 @@ import PuzzleTab from '@/components/game/PuzzleTab';
 import TargetDisplay from '@/components/game/TargetDisplay';
 import CurrentOperation from '@/components/game/CurrentOperation';
 import HelpDialog from '@/components/game/HelpDialog';
-import AdBanner from '@/components/AdBanner';
 
 // Seeded random number generator
 function seededRandom(seed) {
@@ -321,7 +320,7 @@ export default function Game() {
           </div>
 
           {/* Numbers Grid */}
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 max-w-xs sm:max-w-sm mb-4 sm:mb-6">
+          <div className="flex flex-row justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
             <AnimatePresence mode="popLayout">
               {currentState.numbers.map((numObj) => (
                 <motion.div
@@ -387,9 +386,6 @@ export default function Game() {
           </div>
         </div>
 
-        {/* Ad Banner */}
-        <AdBanner />
-        
         {/* Footer */}
         <footer className="text-center mt-2">
           <p className="text-[10px] sm:text-xs text-slate-600">
