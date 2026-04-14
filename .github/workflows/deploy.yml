@@ -34,12 +34,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: List build output
-        run: |
-          ls -la dist/
-          ls -la dist/assets/
-          head -30 dist/index.html
-
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
