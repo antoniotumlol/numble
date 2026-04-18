@@ -11,6 +11,7 @@ import CurrentOperation from '@/components/game/CurrentOperation';
 import OperationHistory from '@/components/game/OperationHistory';
 import HelpDialog from '@/components/game/HelpDialog';
 import ShareDialog from '@/components/game/ShareDialog';
+import Footer from '@/components/ui/Footer';
 
 // Seeded random number generator
 function seededRandom(seed) {
@@ -531,11 +532,12 @@ export default function Game() {
         </div>
 
         {/* Footer */}
-        <footer className="text-center mt-2">
-          <p className="text-[10px] sm:text-xs text-slate-600">
+        <div className="text-center mt-2">
+          <p className="text-[10px] sm:text-xs text-slate-600 mb-1">
             New puzzles every day at midnight
           </p>
-        </footer>
+          <Footer />
+        </div>
       </div>
 
       {/* Help Dialog */}
