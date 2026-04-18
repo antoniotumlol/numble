@@ -8,6 +8,7 @@ import StarRating from '@/components/game/StarRating';
 import PuzzleTab from '@/components/game/PuzzleTab';
 import TargetDisplay from '@/components/game/TargetDisplay';
 import CurrentOperation from '@/components/game/CurrentOperation';
+import OperationHistory from '@/components/game/OperationHistory';
 import HelpDialog from '@/components/game/HelpDialog';
 import ShareDialog from '@/components/game/ShareDialog';
 
@@ -69,7 +70,17 @@ function generateDailyPuzzles() {
     }
     
     // Ensure target is reasonable (between 1 and 999)
-    const target = Math.max(1, Math.min(999, Math.abs(result)));
+    let target = Math.max(1, Math.min(999, Math.abs(result)));
+    
+    // Ensure target is not among the starting numbers
+    while (numbers.includes(target)) {
+      // If target is in the starting numbers, adjust it
+      if (target < 999) {
+        target++;
+      } else {
+        target--;
+      }
+    }
     
     puzzles.push({
       id: p,
@@ -90,10 +101,51 @@ function calculateStars(target, closest) {
   return 0;
 }
 
+// Get today's date key for localStorage
+function getTodayKey() {
+  const today = new Date();
+  return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+}
+
+// Load saved progress from localStorage
+function loadSavedProgress(puzzles) {
+  try {
+    const savedData = localStorage.getItem('numble-progress');
+    if (!savedData) return null;
+    
+    const { date, puzzleStates, activePuzzle } = JSON.parse(savedData);
+    
+    // Check if saved data is from today
+    if (date !== getTodayKey()) {
+      // Clear old data
+      localStorage.removeItem('numble-progress');
+      return null;
+    }
+    
+    return { puzzleStates, activePuzzle };
+  } catch (error) {
+    console.error('Error loading saved progress:', error);
+    return null;
+  }
+}
+
+// Save progress to localStorage
+function saveProgress(puzzleStates, activePuzzle) {
+  try {
+    const data = {
+      date: getTodayKey(),
+      puzzleStates,
+      activePuzzle
+    };
+    localStorage.setItem('numble-progress', JSON.stringify(data));
+  } catch (error) {
+    console.error('Error saving progress:', error);
+  }
+}
+
 export default function Game() {
   const puzzles = useMemo(() => generateDailyPuzzles(), []);
   
-  const [activePuzzle, setActivePuzzle] = useState(0);
   const [helpOpen, setHelpOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -119,14 +171,24 @@ export default function Game() {
     }
   };
 
-  const [puzzleStates, setPuzzleStates] = useState(() => 
-    puzzles.map(puzzle => ({
+  // Load saved progress or initialize new state
+  const [puzzleStates, setPuzzleStates] = useState(() => {
+    const saved = loadSavedProgress(puzzles);
+    if (saved) {
+      return saved.puzzleStates;
+    }
+    return puzzles.map(puzzle => ({
       numbers: puzzle.startingNumbers.map((n, i) => ({ value: n, id: i, isOriginal: true, used: false })),
       history: [],
       selectedFirst: null,
       selectedOperation: null
-    }))
-  );
+    }));
+  });
+
+  const [activePuzzle, setActivePuzzle] = useState(() => {
+    const saved = loadSavedProgress(puzzles);
+    return saved ? saved.activePuzzle : 0;
+  });
 
   const currentPuzzle = puzzles[activePuzzle];
   const currentState = puzzleStates[activePuzzle];
@@ -141,7 +203,7 @@ export default function Game() {
   }, [currentState.numbers, currentPuzzle.target]);
 
   const stars = calculateStars(currentPuzzle.target, closestNumber);
-  const isComplete = availableNumbers.length === 1 || closestNumber === currentPuzzle.target;
+  const isComplete = closestNumber === currentPuzzle.target;
 
   useEffect(() => {
     if (closestNumber === currentPuzzle.target && activePuzzle < puzzles.length - 1) {
@@ -152,6 +214,11 @@ export default function Game() {
         setShareOpen(true);
     }
   }, [closestNumber, currentPuzzle.target, activePuzzle, puzzles.length, isComplete]);
+
+  // Save progress whenever state changes
+  useEffect(() => {
+    saveProgress(puzzleStates, activePuzzle);
+  }, [puzzleStates, activePuzzle]);
 
   const updateCurrentState = useCallback((updater) => {
     setPuzzleStates(prev => {
@@ -213,8 +280,10 @@ export default function Game() {
         history: [...state.history, {
           firstId: state.selectedFirst.id,
           secondId: numberObj.id,
-          oldFirstValue: state.selectedFirst.value,
-          operation: state.selectedOperation
+          firstValue: state.selectedFirst.value,
+          secondValue: numberObj.value,
+          operation: state.selectedOperation,
+          result: result
         }],
         selectedFirst: null,
         selectedOperation: null
@@ -242,7 +311,7 @@ export default function Game() {
       updateCurrentState(state => ({
         numbers: state.numbers.map(n => {
           if (n.id === lastAction.firstId) {
-            return { ...n, value: lastAction.oldFirstValue };
+            return { ...n, value: lastAction.firstValue };
           }
           if (n.id === lastAction.secondId) {
             return { ...n, used: false };
@@ -363,6 +432,11 @@ export default function Game() {
           {/* Star Rating */}
           <div className="my-0 sm:my-4">
             <StarRating stars={stars} size="large" />
+          </div>
+
+          {/* Operation History */}
+          <div className="mb-2 sm:mb-4 w-full px-4">
+            <OperationHistory history={currentState.history} />
           </div>
 
           {/* Current Operation Display */}
