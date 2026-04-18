@@ -205,15 +205,28 @@ export default function Game() {
   const stars = calculateStars(currentPuzzle.target, closestNumber);
   const isComplete = closestNumber === currentPuzzle.target;
 
+  // Check if all puzzles are perfectly completed
+  const allPuzzlesPerfect = useMemo(() => {
+    return puzzles.every((puzzle, idx) => {
+      const state = puzzleStates[idx];
+      const nums = state.numbers.filter(n => !n.used).map(n => n.value);
+      if (nums.length === 0) return false;
+      const closest = nums.reduce((c, n) => 
+        Math.abs(n - puzzle.target) < Math.abs(c - puzzle.target) ? n : c
+      );
+      return closest === puzzle.target;
+    });
+  }, [puzzles, puzzleStates]);
+
   useEffect(() => {
     if (closestNumber === currentPuzzle.target && activePuzzle < puzzles.length - 1) {
       setTimeout(() => {
         setActivePuzzle(prev => prev + 1);
       }, 1000);
-    } else if (activePuzzle === puzzles.length - 1 && isComplete && closestNumber === currentPuzzle.target) {
+    } else if (activePuzzle === puzzles.length - 1 && isComplete && allPuzzlesPerfect) {
         setShareOpen(true);
     }
-  }, [closestNumber, currentPuzzle.target, activePuzzle, puzzles.length, isComplete]);
+  }, [closestNumber, currentPuzzle.target, activePuzzle, puzzles.length, isComplete, allPuzzlesPerfect]);
 
   // Save progress whenever state changes
   useEffect(() => {
